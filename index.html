@@ -2,48 +2,12 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statut des Serveurs Minecraft</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Redirection vers Moniteur Minecraft</title>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1><i class="fas fa-cube"></i> Statut des Serveurs Minecraft</h1>
-            <p>Vérifiez l'état et les informations de vos serveurs Minecraft préférés</p>
-        </div>
-    </header>
-
-    <main class="container">
-        <div class="controls">
-            <input type="text" id="serverInput" placeholder="Adresse du serveur (ex: mc.hypixel.net)">
-            <button id="addServer">Ajouter un serveur</button>
-            <button id="refreshAll">Actualiser tous</button>
-        </div>
-
-        <div class="server-list" id="serverList">
-            <!-- Les serveurs seront ajoutés ici dynamiquement -->
-            <div class="server-card loading">
-                <div class="server-header">
-                    <h2>Chargement...</h2>
-                    <span class="status">En attente</span>
-                </div>
-                <div class="server-info">
-                    <p>Adresse: ...</p>
-                    <p>Joueurs: ...</p>
-                    <p>Version: ...</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Statut des Serveurs Minecraft</p>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
+    <script>
+        window.location.href = "monitor.html";
+    </script>
+    <p>Redirection en cours vers le moniteur Minecraft...</p>
 </body>
-</html>
+</html> 
