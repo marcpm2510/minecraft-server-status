@@ -1,0 +1,28 @@
+{
+  "name": "minecraft-server-status",
+  "version": "1.0.0",
+  "description": "Une application web simple pour vérifier l'état et les informations des serveurs Minecraft.",
+  "main": "check_servers.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node start.js",
+    "web": "node server.js",
+    "web-only": "node start-web.js",
+    "api": "node api.js",
+    "check": "node check_minecraft_servers.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcpm2510/test2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marcpm2510/test2/issues"
+  },
+  "homepage": "https://github.com/marcpm2510/test2#readme",
+  "dependencies": {
+    "minecraft-server-util": "^5.4.4"
+  }
+}

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moniteur de Serveurs Minecraft</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #27ae60;
+            --accent-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: var(--primary-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        header h1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        header h1 i {
+            margin-right: 15px;
+            color: var(--secondary-color);
+        }
+        
+        header p {
+            text-align: center;
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .refresh-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .auto-refresh select {
+            padding: 8px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+        }
+        
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #219653;
+        }
+        
+        button.refresh-all {
+            background-color: #3498db;
+        }
+        
+        button.refresh-all:hover {
+            background-color: #2980b9;
+        }
+        
+        .server-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .server-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .server-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .server-header {
+            padding: 15px;
+            background-color: var(--dark-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .server-header h2 {
+            font-size: 1.2rem;
+            margin: 0;
+            word-break: break-all;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .online {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .offline {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .loading {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .server-body {
+            padding: 15px;
+        }
+        
+        .server-info {
+            margin-bottom: 15px;
+        }
+        
+        .server-info p {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .server-info i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--dark-color);
+        }
+        
+        .server-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .server-actions button {
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .server-actions .refresh-btn {
+            background-color: #3498db;
+        }
+        
+        .server-actions .refresh-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .server-actions .remove-btn {
+            background-color: var(--accent-color);
+        }
+        
+        .server-actions .remove-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .add-server {
+            margin-top: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .add-server h2 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            color: var(--dark-color);
+        }
+        
+        .add-server-form {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .add-server-form input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+        
+        .add-server-form button {
+            background-color: var(--secondary-color);
+        }
+        
+        .last-update {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .refresh-controls {
+                flex-direction: column;
+            }
+            
+            .server-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .add-server-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-cube"></i> Moniteur de Serveurs Minecraft</h1>
+            <p>Surveillez l'état et les informations de vos serveurs Minecraft en temps réel</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="controls">
+            <div class="refresh-controls">
+                <button id="refreshAll" class="refresh-all">
+                    <i class="fas fa-sync-alt"></i> Actualiser tous
+                </button>
+                <div class="auto-refresh">
+                    <label for="refreshInterval">Auto-actualisation:</label>
+                    <select id="refreshInterval">
+                        <option value="0">Désactivée</option>
+                        <option value="30">30 secondes</option>
+                        <option value="60" selected>1 minute</option>
+                        <option value="300">5 minutes</option>
+                        <option value="600">10 minutes</option>
+                    </select>
+                </div>
+            </div>
+            <div id="summary">
+                <span id="onlineCount">0</span> serveurs en ligne, <span id="offlineCount">0</span> hors ligne
+            </div>
+        </div>
+        
+        <div id="serverGrid" class="server-grid">
+            <!-- Les serveurs seront ajoutés ici dynamiquement -->
+        </div>
+        
+        <div class="add-server">
+            <h2><i class="fas fa-plus-circle"></i> Ajouter un serveur</h2>
+            <div class="add-server-form">
+                <input type="text" id="serverInput" placeholder="Adresse du serveur (ex: mc.hypixel.net ou 141.145.205.83:25565)">
+                <button id="addServer">
+                    <i class="fas fa-plus"></i> Ajouter
+                </button>
+            </div>
+        </div>
+        
+        <p id="lastUpdate" class="last-update">Dernière actualisation: Jamais</p>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Moniteur de Serveurs Minecraft | Développé avec <i class="fas fa-heart" style="color: #e74c3c;"></i></p>
+        </div>
+    </footer>
+    
+    <script>
+        // Configuration
+        let servers = [
+            '141.145.205.83:25570',
+            '141.145.205.83:25565',
+            '141.145.199.182:25575'
+        ];
+        
+        // Éléments DOM
+        const serverGrid = document.getElementById('serverGrid');
+        const refreshAllBtn = document.getElementById('refreshAll');
+        const serverInput = document.getElementById('serverInput');
+        const addServerBtn = document.getElementById('addServer');
+        const refreshIntervalSelect = document.getElementById('refreshInterval');
+        const lastUpdateElement = document.getElementById('lastUpdate');
+        const onlineCountElement = document.getElementById('onlineCount');
+        const offlineCountElement = document.getElementById('offlineCount');
+        
+        // Variables globales
+        let autoRefreshInterval = null;
+        let onlineCount = 0;
+        let offlineCount = 0;
+        
+        // Initialisation
+        function init() {
+            // Charger les serveurs depuis le stockage local s'ils existent
+            const savedServers = localStorage.getItem('minecraftServers');
+            if (savedServers) {
+                servers = JSON.parse(savedServers);
+            } else {
+                // Sinon, sauvegarder les serveurs par défaut
+                saveServers();
+            }
+            
+            // Créer les cartes de serveurs
+            serverGrid.innerHTML = '';
+            servers.forEach(server => {
+                createServerCard(server);
+            });
+            
+            // Actualiser tous les serveurs
+            refreshAllServers();
+            
+            // Configurer l'auto-actualisation
+            setupAutoRefresh();
+        }
+        
+        // Sauvegarder les serveurs dans le stockage local
+        function saveServers() {
+            localStorage.setItem('minecraftServers', JSON.stringify(servers));
+        }
+        
+        // Créer une carte de serveur
+        function createServerCard(serverAddress) {
+            const serverCard = document.createElement('div');
+            serverCard.className = 'server-card';
+            serverCard.dataset.address = serverAddress;
+            
+            // Extraire l'hôte et le port
+            let host, port;
+            if (serverAddress.includes(':')) {
+                [host, port] = serverAddress.split(':');
+            } else {
+                host = serverAddress;
+                port = '25565'; // Port Minecraft par défaut
+            }
+            
+            serverCard.innerHTML = `
+                <div class="server-header">
+                    <h2>${serverAddress}</h2>
+                    <span class="status loading"><i class="fas fa-spinner fa-spin"></i> Chargement</span>
+                </div>
+                <div class="server-body">
+                    <div class="server-info">
+                        <p><i class="fas fa-network-wired"></i> Adresse: ${serverAddress}</p>
+                        <p><i class="fas fa-info-circle"></i> Statut: Vérification en cours...</p>
+                    </div>
+                    <div class="server-actions">
+                        <button class="refresh-btn"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                        <button class="remove-btn"><i class="fas fa-trash"></i> Supprimer</button>
+                    </div>
+                </div>
+            `;
+            
+            serverGrid.appendChild(serverCard);
+            
+            // Ajouter les écouteurs d'événements
+            const refreshBtn = serverCard.querySelector('.refresh-btn');
+            const removeBtn = serverCard.querySelector('.remove-btn');
+            
+            refreshBtn.addEventListener('click', () => {
+                checkServerStatus(serverCard, serverAddress);
+            });
+            
+            removeBtn.addEventListener('click', () => {
+                removeServer(serverCard, serverAddress);
+            });
+            
+            return serverCard;
+        }
+        
+        // Vérifier le statut d'un serveur
+        async function checkServerStatus(serverCard, serverAddress) {
+            // Mettre à jour l'interface pour indiquer le chargement
+            const statusElement = serverCard.querySelector('.status');
+            statusElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Chargement';
+            statusElement.className = 'status loading';
+            
+            const serverInfo = serverCard.querySelector('.server-info');
+            
+            try {
+                // Utiliser l'API mcsrvstat.us directement au lieu de notre API locale
+                const response = await fetch(`https://api.mcsrvstat.us/2/${serverAddress}`);
+                const data = await response.json();
+                
+                // Adapter les données au format attendu par updateServerCard
+                const adaptedData = {
+                    online: data.online || false,
+                    address: serverAddress,
+                    version: data.version || 'Information non disponible',
+                    players: data.players || { online: 0, max: 0 },
+                    motd: data.motd || { clean: ['Aucune description'] }
+                };
+                
+                // Mettre à jour l'interface avec les résultats
+                updateServerCard(serverCard, adaptedData);
+            } catch (error) {
+                console.error(`Erreur lors de la vérification de ${serverAddress}:`, error);
+                
+                // Afficher l'erreur dans l'interface
+                statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Erreur';
+                statusElement.className = 'status offline';
+                
+                serverInfo.innerHTML = `
+                    <p><i class="fas fa-network-wired"></i> Adresse: ${serverAddress}</p>
+                    <p><i class="fas fa-exclamation-triangle"></i> Erreur: Impossible de vérifier le statut du serveur</p>
+                    <p><i class="fas fa-bug"></i> Détails: ${error.message}</p>
+                `;
+                
+                // Mettre à jour les compteurs
+                updateCounters();
+            }
+        }
+        
+        // Mettre à jour la carte du serveur avec les données
+        function updateServerCard(serverCard, data) {
+            const statusElement = serverCard.querySelector('.status');
+            const serverInfo = serverCard.querySelector('.server-info');
+            const serverAddress = serverCard.dataset.address;
+            
+            if (data.online) {
+                // Serveur en ligne
+                statusElement.innerHTML = '<i class="fas fa-check-circle"></i> En ligne';
+                statusElement.className = 'status online';
+                
+                // Informations des joueurs
+                const playersInfo = data.players ? 
+                    `${data.players.online}/${data.players.max}` : 
+                    'Information non disponible';
+                
+                // Version du serveur
+                const versionInfo = data.version || 'Information non disponible';
+                
+                // MOTD (Message of the Day)
+                const motd = data.motd && data.motd.clean ? 
+                    data.motd.clean.join('<br>') : 
+                    'Aucune description';
+                
+                // Mettre à jour les informations
+                serverInfo.innerHTML = `
+                    <p><i class="fas fa-network-wired"></i> Adresse: ${data.address}</p>
+                    <p><i class="fas fa-users"></i> Joueurs: ${playersInfo}</p>
+                    <p><i class="fas fa-code-branch"></i> Version: ${versionInfo}</p>
+                    <p><i class="fas fa-comment"></i> Description: ${motd}</p>
+                `;
+                
+                // Ajouter la latence si disponible
+                if (data.roundTripLatency) {
+                    serverInfo.innerHTML += `<p><i class="fas fa-tachometer-alt"></i> Latence: ${data.roundTripLatency} ms</p>`;
+                }
+            } else {
+                // Serveur hors ligne
+                statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Hors ligne';
+                statusElement.className = 'status offline';
+                
+                // Message d'erreur
+                serverInfo.innerHTML = `
+                    <p><i class="fas fa-network-wired"></i> Adresse: ${data.address}</p>
+                    <p><i class="fas fa-exclamation-triangle"></i> Statut: Le serveur est actuellement hors ligne ou inaccessible</p>
+                    <p><i class="fas fa-clock"></i> Dernière vérification: ${new Date().toLocaleTimeString()}</p>
+                `;
+                
+                // Ajouter le message d'erreur si disponible
+                if (data.error) {
+                    serverInfo.innerHTML += `<p><i class="fas fa-bug"></i> Erreur: ${data.error}</p>`;
+                }
+            }
+            
+            // Mettre à jour les compteurs
+            updateCounters();
+        }
+        
+        // Actualiser tous les serveurs
+        function refreshAllServers() {
+            const serverCards = document.querySelectorAll('.server-card');
+            serverCards.forEach(card => {
+                const serverAddress = card.dataset.address;
+                checkServerStatus(card, serverAddress);
+            });
+            
+            // Mettre à jour l'heure de la dernière actualisation
+            lastUpdateElement.textContent = `Dernière actualisation: ${new Date().toLocaleString()}`;
+        }
+        
+        // Supprimer un serveur
+        function removeServer(serverCard, serverAddress) {
+            // Supprimer de l'interface
+            serverCard.remove();
+            
+            // Supprimer de la liste
+            servers = servers.filter(address => address !== serverAddress);
+            
+            // Sauvegarder
+            saveServers();
+            
+            // Mettre à jour les compteurs
+            updateCounters();
+        }
+        
+        // Configurer l'auto-actualisation
+        function setupAutoRefresh() {
+            // Arrêter l'intervalle existant s'il y en a un
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
+            
+            // Obtenir la valeur de l'intervalle en secondes
+            const intervalSeconds = parseInt(refreshIntervalSelect.value);
+            
+            // Si l'intervalle est supérieur à 0, configurer l'auto-actualisation
+            if (intervalSeconds > 0) {
+                autoRefreshInterval = setInterval(() => {
+                    refreshAllServers();
+                }, intervalSeconds * 1000);
+            }
+        }
+        
+        // Mettre à jour les compteurs de serveurs en ligne/hors ligne
+        function updateCounters() {
+            onlineCount = document.querySelectorAll('.status.online').length;
+            offlineCount = document.querySelectorAll('.status.offline').length;
+            
+            onlineCountElement.textContent = onlineCount;
+            offlineCountElement.textContent = offlineCount;
+        }
+        
+        // Événements
+        refreshAllBtn.addEventListener('click', refreshAllServers);
+        
+        addServerBtn.addEventListener('click', () => {
+            const serverAddress = serverInput.value.trim();
+            if (serverAddress && !servers.includes(serverAddress)) {
+                servers.push(serverAddress);
+                saveServers();
+                const serverCard = createServerCard(serverAddress);
+                checkServerStatus(serverCard, serverAddress);
+                serverInput.value = '';
+            } else if (servers.includes(serverAddress)) {
+                alert('Ce serveur est déjà dans votre liste!');
+            }
+        });
+        
+        refreshIntervalSelect.addEventListener('change', setupAutoRefresh);
+        
+        // Permettre l'ajout d'un serveur en appuyant sur Entrée
+        serverInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addServerBtn.click();
+            }
+        });
+        
+        // Initialiser l'application
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html> 
