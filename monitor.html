@@ -145,19 +145,26 @@
         }
         
         .server-header h2 {
-            font-size: 1.2rem;
+            font-size: 0.9rem;
             margin: 0;
             word-break: break-all;
+            max-width: 70%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
         .status {
-            padding: 5px 10px;
+            padding: 5px 8px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: bold;
             display: flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap;
+            min-width: 80px;
+            justify-content: center;
         }
         
         .online {
@@ -407,10 +414,13 @@
                 port = '25565'; // Port Minecraft par défaut
             }
             
+            // Formater l'adresse pour l'affichage
+            const displayAddress = formatAddress(serverAddress);
+            
             serverCard.innerHTML = `
                 <div class="server-header">
-                    <h2>${serverAddress}</h2>
-                    <span class="status loading"><i class="fas fa-spinner fa-spin"></i> Chargement</span>
+                    <h2 title="${serverAddress}">${displayAddress}</h2>
+                    <div class="status loading"><i class="fas fa-spinner fa-spin"></i> <span>Chargement</span></div>
                 </div>
                 <div class="server-body">
                     <div class="server-info">
@@ -441,11 +451,17 @@
             return serverCard;
         }
         
+        // Formater l'adresse pour l'affichage
+        function formatAddress(address) {
+            // Retourner l'adresse complète
+            return address;
+        }
+        
         // Vérifier le statut d'un serveur
         async function checkServerStatus(serverCard, serverAddress) {
             // Mettre à jour l'interface pour indiquer le chargement
             const statusElement = serverCard.querySelector('.status');
-            statusElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Chargement';
+            statusElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Chargement</span>';
             statusElement.className = 'status loading';
             
             const serverInfo = serverCard.querySelector('.server-info');
@@ -470,7 +486,7 @@
                 console.error(`Erreur lors de la vérification de ${serverAddress}:`, error);
                 
                 // Afficher l'erreur dans l'interface
-                statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Erreur';
+                statusElement.innerHTML = '<i class="fas fa-times-circle"></i> <span>Erreur</span>';
                 statusElement.className = 'status offline';
                 
                 serverInfo.innerHTML = `
@@ -492,7 +508,7 @@
             
             if (data.online) {
                 // Serveur en ligne
-                statusElement.innerHTML = '<i class="fas fa-check-circle"></i> En ligne';
+                statusElement.innerHTML = '<i class="fas fa-check-circle"></i> <span>En ligne</span>';
                 statusElement.className = 'status online';
                 
                 // Informations des joueurs
@@ -522,7 +538,7 @@
                 }
             } else {
                 // Serveur hors ligne
-                statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Hors ligne';
+                statusElement.innerHTML = '<i class="fas fa-times-circle"></i> <span>Hors ligne</span>';
                 statusElement.className = 'status offline';
                 
                 // Message d'erreur
